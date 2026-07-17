@@ -61,7 +61,28 @@ body:JSON.stringify({
 
 chat_id:ADMIN,
 
-text:message
+text:message,
+
+reply_markup:{
+inline_keyboard:[
+[
+{
+text:"🟢 Одобрить",
+callback_data:"approve"
+},
+{
+text:"🟡 Поправить",
+callback_data:"edit"
+}
+],
+[
+{
+text:"🔴 Отклонить",
+callback_data:"reject"
+}
+]
+]
+}
 
 })
 
