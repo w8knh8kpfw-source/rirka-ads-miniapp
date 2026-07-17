@@ -98,7 +98,48 @@ success:true
 
 
 app.listen(3000,()=>{
+app.post("/telegram", async (req,res)=>{
 
+const query = req.body.callback_query;
+
+if(!query){
+return res.sendStatus(200);
+}
+
+const userId = query.message.text.match(/Telegram ID:\n(\d+)/)?.[1];
+
+let text = "";
+
+if(query.data === "approve"){
+text = "✅ Ваша заявка одобрена RIRKA Ads";
+}
+
+if(query.data === "edit"){
+text = "✏️ Пожалуйста, исправьте заявку и отправьте её снова";
+}
+
+if(query.data === "reject"){
+text = "❌ Ваша заявка отклонена RIRKA Ads";
+}
+
+
+await fetch(
+`https://api.telegram.org/bot${TOKEN}/sendMessage`,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+chat_id:userId,
+text:text
+})
+});
+
+
+res.sendStatus(200);
+
+});
 console.log("Server started");
 
 });
