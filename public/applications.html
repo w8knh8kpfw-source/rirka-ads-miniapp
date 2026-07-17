@@ -546,7 +546,62 @@ window.location.href="form.html";
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+
+const SUPABASE_URL = "https://zlrkyfninighesrcwkep.supabase.co";
+
+const SUPABASE_KEY = 8511758178:AAFfziGA-De9gOyf-0YZ0BRH7MQ5XQh1JEA"";
+
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+async function loadApplications(){
+
+const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+
+if(!tgUser){
+
+console.log("Нет Telegram пользователя");
+
+return;
+
+}
+
+
+
+const { data, error } = await supabaseClient
+.from("applications")
+.select("*")
+.eq("tg_id", tgUser.id)
+.order("created_at", {ascending:false});
+
+
+if(error){
+
+console.log(error);
+return;
+
+}
+
+
+
+console.log(data);
+
+
+}
+
+
+loadApplications();
+
+
+</script>
 </body>
 
 </html>
