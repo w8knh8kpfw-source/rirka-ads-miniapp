@@ -24,6 +24,12 @@ const message = `
 👤 Пользователь:
 ${data.name || "Не указано"}
 
+🏷 Username:
+${data.username ? "@" + data.username : "Нет"}
+
+🆔 Telegram ID:
+${data.telegramId || "Нет"}
+
 📌 Проект:
 ${data.project}
 
