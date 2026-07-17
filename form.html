@@ -448,7 +448,9 @@ headers:{
 
 
 body:JSON.stringify({
+telegramId: user ? user.id : null,
 
+username: user ? user.username : null,
 
 name: user ? user.first_name : "Неизвестно",
 
