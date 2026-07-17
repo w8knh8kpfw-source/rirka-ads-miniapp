@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
 
 <meta charset="UTF-8">
@@ -7,15 +8,18 @@
 
 <title>RIRKA Ads</title>
 
+
 <style>
 
 *{
 box-sizing:border-box;
 }
 
+
 body{
 
 margin:0;
+
 min-height:100vh;
 
 font-family:
@@ -26,17 +30,20 @@ BlinkMacSystemFont,
 Arial,
 sans-serif;
 
+
 color:#111;
 
-overflow:hidden;
+overflow-x:hidden;
 
 
-background:#f5f5f7;
+background:#f2f2f7;
 
 }
 
 
-/* мягкие световые облака */
+
+/* ===== LIQUID BACKGROUND ===== */
+
 
 body::before,
 body::after{
@@ -47,9 +54,11 @@ position:fixed;
 
 border-radius:50%;
 
-filter:blur(120px);
+z-index:-1;
 
-z-index:-2;
+filter:blur(90px);
+
+animation:float 18s infinite alternate ease-in-out;
 
 }
 
@@ -57,24 +66,23 @@ z-index:-2;
 
 body::before{
 
-width:600px;
-height:600px;
+width:520px;
 
-top:-220px;
-left:-220px;
+height:520px;
+
+top:-180px;
+
+left:-120px;
 
 
 background:
 
 radial-gradient(
 circle,
-rgba(120,170,255,.45),
+rgba(0,122,255,.65),
+rgba(175,82,222,.35),
 transparent 70%
 );
-
-
-animation:
-blueMove 20s infinite alternate ease-in-out;
 
 }
 
@@ -82,66 +90,134 @@ blueMove 20s infinite alternate ease-in-out;
 
 body::after{
 
-width:650px;
-height:650px;
+width:600px;
 
-right:-250px;
-bottom:-250px;
+height:600px;
+
+right:-200px;
+
+bottom:-200px;
 
 
 background:
 
 radial-gradient(
 circle,
-rgba(190,150,255,.35),
+rgba(255,45,85,.45),
+rgba(52,199,89,.35),
 transparent 70%
 );
 
 
+animation-duration:24s;
+
+}
+
+
+
+
+@keyframes float{
+
+0%{
+
+transform:
+translate(0,0)
+scale(1);
+
+}
+
+
+40%{
+
+transform:
+translate(90px,-60px)
+scale(1.15);
+
+}
+
+
+70%{
+
+transform:
+translate(-40px,100px)
+scale(.95);
+
+}
+
+
+100%{
+
+transform:
+translate(80px,40px)
+scale(1.1);
+
+}
+
+}
+
+
+
+
+/* дополнительный слой цветов */
+
+
+.background-ball{
+
+position:fixed;
+
+width:350px;
+
+height:350px;
+
+border-radius:50%;
+
+filter:blur(100px);
+
+opacity:.6;
+
+z-index:-1;
+
+
+background:
+
+linear-gradient(
+135deg,
+#00c6ff,
+#0072ff,
+#ff00cc
+);
+
+
 animation:
-purpleMove 24s infinite alternate ease-in-out;
+
+ballMove 20s infinite alternate;
 
 }
 
 
 
-@keyframes blueMove{
+@keyframes ballMove{
 
-0%{
-transform:translate(0,0) scale(1);
-}
 
-50%{
-transform:translate(120px,120px) scale(1.2);
-}
+from{
 
-100%{
-transform:translate(-50px,200px) scale(1);
-}
+transform:
+translate(-100px,200px);
 
 }
 
 
+to{
 
-@keyframes purpleMove{
-
-0%{
-transform:translate(0,0) scale(1);
-}
-
-50%{
-transform:translate(-130px,-100px) scale(1.25);
-}
-
-100%{
-transform:translate(80px,-40px) scale(1);
-}
+transform:
+translate(250px,-100px);
 
 }
 
 
+}
 
-/* контейнер */
+
 
 
 .app{
@@ -150,16 +226,16 @@ max-width:430px;
 
 margin:auto;
 
-padding:25px 20px 140px;
+padding:
 
-position:relative;
+25px 20px 150px;
 
 }
 
 
 
 
-/* верх */
+/* HEADER */
 
 
 .header{
@@ -176,7 +252,7 @@ align-items:center;
 
 .logo{
 
-font-size:25px;
+font-size:24px;
 
 font-weight:800;
 
@@ -188,20 +264,31 @@ letter-spacing:-1px;
 
 .avatar{
 
-width:52px;
+width:48px;
 
-height:52px;
+height:48px;
 
 border-radius:50%;
 
-display:flex;
+overflow:hidden;
 
-align-items:center;
 
-justify-content:center;
+background:
+
+rgba(255,255,255,.35);
+
+
+backdrop-filter:
+
+blur(40px);
+
+
+border:
+
+1px solid rgba(255,255,255,.7);
+
 
 }
-
 
 
 
@@ -211,153 +298,27 @@ width:100%;
 
 height:100%;
 
-border-radius:50%;
-
 object-fit:cover;
 
 }
 
 
 
+#welcome{
 
+margin-top:22px;
 
-/* жидкое стекло */
+font-size:18px;
 
-
-.avatar,
-.glass,
-.liquid-button,
-.dock{
-
-
-position:relative;
-
-overflow:hidden;
-
-
-background:
-
-linear-gradient(
-135deg,
-rgba(255,255,255,.30),
-rgba(255,255,255,.06)
-);
-
-
-
-backdrop-filter:
-
-blur(45px)
-saturate(170%);
-
-
-
--webkit-backdrop-filter:
-
-blur(45px)
-saturate(170%);
-
-
-
-border:
-
-1px solid rgba(255,255,255,.65);
-
-
-
-box-shadow:
-
-
-inset 0 1px 8px rgba(255,255,255,.9),
-
-
-inset 0 -30px 60px rgba(255,255,255,.08),
-
-
-0 35px 100px rgba(0,0,0,.12);
+font-weight:600;
 
 }
-
-
-
-/* блик */
-
-
-.glass::after,
-.avatar::after,
-.liquid-button::after,
-.dock::after{
-
-
-content:"";
-
-position:absolute;
-
-top:-120%;
-
-left:-160%;
-
-
-width:100%;
-
-height:300%;
-
-
-background:
-
-linear-gradient(
-120deg,
-transparent,
-rgba(255,255,255,.6),
-transparent
-);
-
-
-
-transform:rotate(25deg);
-
-
-animation:
-
-shine 9s infinite;
-
-}
-
-
-
-@keyframes shine{
-
-0%{
-left:-160%;
-}
-
-35%,
-100%{
-left:160%;
-}
-
-}
-  @keyframes shine{
-
-0%{
-left:-160%;
-}
-
-35%,
-100%{
-left:160%;
-}
-
-}
-
-
-
-/* главный блок */
+  /* ===== HERO ===== */
 
 
 .hero{
 
-margin-top:45px;
+margin-top:55px;
 
 }
 
@@ -367,13 +328,40 @@ margin-top:45px;
 
 font-size:42px;
 
-line-height:1.05;
+line-height:1.08;
 
 letter-spacing:-2.5px;
 
+margin:0;
+
 font-weight:850;
 
-margin:0;
+
+}
+
+
+
+.typing{
+
+display:inline;
+
+border-right:3px solid rgba(0,0,0,.35);
+
+animation:
+
+cursor .8s infinite;
+
+}
+
+
+
+@keyframes cursor{
+
+50%{
+
+border-color:transparent;
+
+}
 
 }
 
@@ -381,9 +369,11 @@ margin:0;
 
 .hero p{
 
+margin-top:18px;
+
 font-size:17px;
 
-line-height:1.45;
+line-height:1.5;
 
 color:#6e6e73;
 
@@ -393,23 +383,235 @@ color:#6e6e73;
 
 
 
-
-/* карточка */
+/* ===== GLASS CARD ===== */
 
 
 .glass{
 
+
 margin-top:35px;
+
 
 padding:30px;
 
+
 border-radius:42px;
+
+
+position:relative;
+
+overflow:hidden;
+
+
+
+background:
+
+linear-gradient(
+
+135deg,
+
+rgba(255,255,255,.55),
+
+rgba(255,255,255,.12)
+
+);
+
+
+
+backdrop-filter:
+
+blur(80px)
+
+saturate(220%);
+
+
+
+-webkit-backdrop-filter:
+
+blur(80px)
+
+saturate(220%);
+
+
+
+border:
+
+1px solid rgba(255,255,255,.8);
+
+
+
+box-shadow:
+
+
+inset 0 1px 5px rgba(255,255,255,.9),
+
+
+inset 0 -40px 80px rgba(255,255,255,.12),
+
+
+0 40px 120px rgba(0,0,0,.18);
+
+
+
+animation:
+
+appear .8s ease;
 
 }
 
 
 
-.title{
+
+@keyframes appear{
+
+from{
+
+opacity:0;
+
+transform:
+
+translateY(40px);
+
+}
+
+
+to{
+
+opacity:1;
+
+transform:
+
+translateY(0);
+
+}
+
+}
+
+
+
+
+
+/* стеклянный блик */
+
+
+.glass::before{
+
+
+content:"";
+
+
+position:absolute;
+
+
+width:180px;
+
+height:180px;
+
+
+top:-80px;
+
+right:-50px;
+
+
+
+background:
+
+radial-gradient(
+
+circle,
+
+rgba(255,255,255,.9),
+
+transparent 70%
+
+);
+
+
+
+filter:blur(20px);
+
+
+}
+
+
+
+.glass::after{
+
+
+content:"";
+
+
+position:absolute;
+
+
+top:-120%;
+
+left:-80%;
+
+
+width:80%;
+
+height:300%;
+
+
+
+background:
+
+linear-gradient(
+
+120deg,
+
+transparent,
+
+rgba(255,255,255,.65),
+
+transparent
+
+);
+
+
+
+transform:
+
+rotate(25deg);
+
+
+
+animation:
+
+glassShine 8s infinite;
+
+
+
+}
+
+
+
+@keyframes glassShine{
+
+
+0%{
+
+left:-100%;
+
+}
+
+
+35%,
+100%{
+
+left:150%;
+
+}
+
+
+}
+
+
+
+
+
+.card-title{
 
 font-size:27px;
 
@@ -421,116 +623,182 @@ letter-spacing:-1px;
 
 
 
-.text{
+.card-text{
+
 
 margin-top:12px;
 
-font-size:16px;
+font-size:17px;
 
 line-height:1.5;
 
 color:#6e6e73;
 
+
 }
 
 
 
 
-/* кнопка */
 
 
-.liquid-button{
+/* ===== BUTTON ===== */
+
+
+.create-button{
+
 
 margin-top:28px;
 
+
 height:64px;
+
 
 border-radius:32px;
 
 
+
 display:flex;
 
+
 align-items:center;
+
 
 justify-content:center;
 
 
-font-size:18px;
 
-font-weight:700;
+font-size:19px;
+
+font-weight:750;
+
 
 
 cursor:pointer;
 
 
-transition:.25s;
-
-}
-
-
-
-.liquid-button:active{
-
-transform:scale(.92);
-
-}
-
-
-
-
-
-
-
-/* активность */
-
-
-.section{
-
-margin-top:38px;
-
-font-size:23px;
-
-font-weight:800;
-
-}
-
-
-
-.status{
-
-margin-top:15px;
-
-padding:24px;
-
-border-radius:34px;
-
-
 
 background:
 
-rgba(255,255,255,.18);
+linear-gradient(
 
+135deg,
 
+rgba(255,255,255,.8),
 
-backdrop-filter:
+rgba(255,255,255,.25)
 
-blur(45px);
-
-
-
--webkit-backdrop-filter:
-
-blur(45px);
+);
 
 
 
 border:
 
-1px solid rgba(255,255,255,.55);
+1px solid rgba(255,255,255,.9);
 
 
 
-color:#6e6e73;
+backdrop-filter:
+
+blur(40px);
+
+
+
+box-shadow:
+
+
+0 20px 60px rgba(0,0,0,.15),
+
+
+inset 0 2px 5px rgba(255,255,255,.9);
+
+
+
+transition:.25s;
+
+
+position:relative;
+
+overflow:hidden;
+
+
+}
+
+
+
+
+.create-button::after{
+
+
+content:"";
+
+
+position:absolute;
+
+
+inset:0;
+
+
+
+background:
+
+linear-gradient(
+
+120deg,
+
+transparent,
+
+rgba(255,255,255,.7),
+
+transparent
+
+);
+
+
+
+transform:translateX(-120%);
+
+
+
+animation:
+
+buttonLight 5s infinite;
+
+
+}
+
+
+
+
+@keyframes buttonLight{
+
+
+0%{
+
+transform:translateX(-120%);
+
+}
+
+
+40%,
+100%{
+
+transform:translateX(120%);
+
+}
+
+}
+
+
+
+
+.create-button:active{
+
+
+transform:
+
+scale(.94);
+
 
 }
 
@@ -538,8 +806,68 @@ color:#6e6e73;
 
 
 
+/* ===== RULES ===== */
 
-/* нижнее меню */
+
+.rules{
+
+
+margin-top:25px;
+
+
+padding:25px;
+
+
+border-radius:35px;
+
+
+
+background:
+
+rgba(255,255,255,.28);
+
+
+
+backdrop-filter:
+
+blur(60px);
+
+
+
+border:
+
+1px solid rgba(255,255,255,.65);
+
+
+
+}
+
+
+
+.rules-title{
+
+
+font-size:21px;
+
+font-weight:750;
+
+
+}
+
+
+
+.rules p{
+
+
+color:#6e6e73;
+
+line-height:1.5;
+
+font-size:15px;
+
+
+}
+  /* ===== DOCK ===== */
 
 
 .dock{
@@ -568,11 +896,10 @@ max-width:390px;
 height:88px;
 
 
-border-radius:45px;
-
-
-
 padding:12px;
+
+
+border-radius:45px;
 
 
 
@@ -581,6 +908,45 @@ display:flex;
 align-items:center;
 
 justify-content:space-around;
+
+
+
+background:
+
+rgba(255,255,255,.35);
+
+
+
+backdrop-filter:
+
+blur(70px)
+
+saturate(220%);
+
+
+
+-webkit-backdrop-filter:
+
+blur(70px)
+
+saturate(220%);
+
+
+
+border:
+
+1px solid rgba(255,255,255,.75);
+
+
+
+box-shadow:
+
+
+0 30px 80px rgba(0,0,0,.18),
+
+
+inset 0 2px 5px rgba(255,255,255,.8);
+
 
 
 }
@@ -592,7 +958,8 @@ justify-content:space-around;
 
 width:100px;
 
-height:65px;
+
+height:64px;
 
 
 border-radius:30px;
@@ -600,6 +967,7 @@ border-radius:30px;
 
 
 display:flex;
+
 
 flex-direction:column;
 
@@ -614,16 +982,13 @@ justify-content:center;
 font-size:12px;
 
 
-
 color:#8e8e93;
 
 
 
-cursor:pointer;
-
-
-
 transition:.25s;
+
+
 
 }
 
@@ -631,7 +996,7 @@ transition:.25s;
 
 .icon{
 
-font-size:28px;
+font-size:27px;
 
 }
 
@@ -642,7 +1007,7 @@ font-size:28px;
 
 background:
 
-rgba(255,255,255,.5);
+rgba(255,255,255,.65);
 
 
 
@@ -653,18 +1018,19 @@ color:#000;
 box-shadow:
 
 
-inset 0 0 35px rgba(255,255,255,.9),
+inset 0 0 35px rgba(255,255,255,.9);
 
 
-0 15px 40px rgba(0,0,0,.12);
 
 }
 
 
 
+
+
 .item:active{
 
-transform:scale(.88);
+transform:scale(.9);
 
 }
 
@@ -677,10 +1043,17 @@ transform:scale(.88);
 </head>
 
 
+
 <body>
 
 
+
+<div class="background-ball"></div>
+
+
+
 <div class="app">
+
 
 
 <div class="header">
@@ -693,9 +1066,10 @@ transform:scale(.88);
 </div>
 
 
+
 <div class="avatar">
 
-<img id="userPhoto" src="" alt="">
+<img id="userPhoto" src="">
 
 </div>
 
@@ -703,79 +1077,113 @@ transform:scale(.88);
 </div>
 
 
-<div id="welcome" style="
-margin-top:20px;
-font-size:18px;
-font-weight:600;
-">
+
+
+<div id="welcome">
 
 </div>
+
+
+
 
 
 <div class="hero">
 
 
+
 <h1>
 
-Реклама.<br>
-Новый уровень.
+<span class="typing" id="typing"></span>
+
 
 </h1>
 
 
+
 <p>
 
-Создавайте заявки и получайте размещение через проверку администрации.
+Создайте рекламную заявку и получите условия размещения после проверки администрации.
 
 </p>
+
 
 
 </div>
 
 
+
+
+
+
 <div class="glass">
 
 
-<div class="title">
+
+<div class="card-title">
 
 📝 Создать заявку
 
 </div>
 
 
-<div class="text">
 
-Опишите вашу рекламу и получите ответ с условиями размещения.
+<div class="card-text">
 
-</div>
-
-
-<div class="liquid-button"
-onclick="window.location.href='form.html'">
-
-✨ Начать
-
-</div>
-
-
-</div>
-  <div class="section">
-
-Активность
+Расскажите о своей рекламе. Мы проверим заявку и свяжемся с вами.
 
 </div>
 
 
 
-<div class="status">
+<div class="create-button"
+onclick="openForm()">
 
-⏳ Нет активных заявок
+📝 Создать заявку
 
 </div>
 
 
 
 </div>
+
+
+
+
+
+
+
+<div class="rules">
+
+
+<div class="rules-title">
+
+📖 Правила размещения
+
+</div>
+
+
+<p>
+
+• Заявки проходят проверку администрации.<br><br>
+
+• Запрещены материалы, нарушающие правила Telegram.<br><br>
+
+• После одобрения вы получите условия размещения.
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
 
 
 
@@ -787,8 +1195,7 @@ onclick="window.location.href='form.html'">
 
 
 <div class="item active"
-onclick="window.location.href='index.html'">
-
+onclick="location.href='index.html'">
 
 <div class="icon">
 
@@ -796,9 +1203,7 @@ onclick="window.location.href='index.html'">
 
 </div>
 
-
 Главная
-
 
 </div>
 
@@ -807,8 +1212,7 @@ onclick="window.location.href='index.html'">
 
 
 <div class="item"
-onclick="window.location.href='applications.html'">
-
+onclick="location.href='applications.html'">
 
 <div class="icon">
 
@@ -816,9 +1220,7 @@ onclick="window.location.href='applications.html'">
 
 </div>
 
-
 Заявки
-
 
 </div>
 
@@ -827,8 +1229,7 @@ onclick="window.location.href='applications.html'">
 
 
 <div class="item"
-onclick="window.location.href='profile.html'">
-
+onclick="location.href='profile.html'">
 
 <div class="icon">
 
@@ -836,15 +1237,14 @@ onclick="window.location.href='profile.html'">
 
 </div>
 
-
 Профиль
 
-
 </div>
 
 
 
 </div>
+
 
 
 
@@ -856,14 +1256,15 @@ onclick="window.location.href='profile.html'">
 
 
 
+
 <script>
 
 
 const tg = window.Telegram.WebApp;
 
 
-
 tg.ready();
+
 
 
 
@@ -872,15 +1273,11 @@ const user = tg.initDataUnsafe.user;
 
 
 
-
 if(user && user.photo_url){
-
 
 document.getElementById("userPhoto").src = user.photo_url;
 
-
 }
-
 
 
 
@@ -888,12 +1285,88 @@ document.getElementById("userPhoto").src = user.photo_url;
 if(user){
 
 
-document.getElementById("welcome").innerText =
+document.getElementById("welcome").innerHTML =
 
-"Привет, " + (user.first_name || "пользователь") + " 👋";
+"Привет, " + user.first_name + " 👋";
 
 
 }
+
+
+
+
+
+
+
+function openForm(){
+
+
+if(tg.HapticFeedback){
+
+tg.HapticFeedback.impactOccurred("medium");
+
+}
+
+
+window.location.href="form.html";
+
+
+}
+
+
+
+
+
+
+
+/* печатающийся заголовок */
+
+
+const text =
+
+"Ваша реклама —\nследующий шаг к аудитории.";
+
+
+
+let index = 0;
+
+
+
+function typing(){
+
+
+
+if(index < text.length){
+
+
+
+let char = text[index];
+
+
+
+document.getElementById("typing").innerHTML +=
+
+char === "\n" ? "<br>" : char;
+
+
+
+index++;
+
+
+
+setTimeout(typing,70);
+
+
+
+}
+
+
+}
+
+
+
+typing();
+
 
 
 
