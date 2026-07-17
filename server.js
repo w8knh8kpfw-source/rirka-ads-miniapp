@@ -11,7 +11,10 @@ app.use(express.json());
 
 const TOKEN = process.env.BOT_TOKEN;
 const ADMIN = process.env.ADMIN_ID;
-
+const supabase = createClient(
+process.env.SUPABASE_URL,
+process.env.SUPABASE_KEY
+);
 
 app.post("/send", async (req,res)=>{
 
