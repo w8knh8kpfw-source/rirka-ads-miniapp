@@ -45,7 +45,6 @@ color:#111;
 }
 
 
-
 .app{
 
 padding:25px 20px 50px;
@@ -57,14 +56,11 @@ margin:auto;
 }
 
 
-
 .top{
 
 display:flex;
 
 align-items:center;
-
-gap:15px;
 
 }
 
@@ -77,33 +73,27 @@ height:45px;
 
 border-radius:50%;
 
-
 display:flex;
 
 align-items:center;
 
 justify-content:center;
 
-
 font-size:22px;
-
 
 background:
 
 rgba(255,255,255,.55);
 
-
 backdrop-filter:
 
 blur(40px);
-
 
 border:
 
 1px solid rgba(255,255,255,.7);
 
 }
-
 
 
 h1{
@@ -119,7 +109,6 @@ margin-bottom:8px;
 }
 
 
-
 .subtitle{
 
 color:#6e6e73;
@@ -127,18 +116,11 @@ color:#6e6e73;
 font-size:17px;
 
 }
-
-
-
-
 .glass{
-
 
 margin-top:30px;
 
-
 padding:25px;
-
 
 border-radius:35px;
 
@@ -156,18 +138,15 @@ rgba(255,255,255,.2)
 );
 
 
-
 backdrop-filter:
 
 blur(50px)
 saturate(180%);
 
 
-
 border:
 
 1px solid rgba(255,255,255,.7);
-
 
 
 box-shadow:
@@ -176,10 +155,7 @@ box-shadow:
 
 inset 0 1px 2px white;
 
-
-
 }
-
 
 
 
@@ -228,7 +204,6 @@ background:
 rgba(255,255,255,.55);
 
 
-
 backdrop-filter:
 
 blur(20px);
@@ -272,7 +247,6 @@ font-size:18px;
 font-weight:600;
 
 
-
 background:
 
 linear-gradient(
@@ -296,7 +270,6 @@ border:
 box-shadow:
 
 0 15px 40px rgba(0,0,0,.1);
-
 
 
 }
@@ -329,9 +302,7 @@ transform:scale(.95);
 
 </div>
 
-
 </div>
-
 
 
 <h1>
@@ -344,10 +315,6 @@ transform:scale(.95);
 Расскажите о рекламе, мы проверим её и предложим условия.
 
 </div>
-
-
-
-
 <div class="glass">
 
 
@@ -355,7 +322,7 @@ transform:scale(.95);
 Название проекта
 </label>
 
-<input placeholder="Например: RIRKA Store">
+<input id="project" placeholder="Например: RIRKA Store">
 
 
 
@@ -363,7 +330,7 @@ transform:scale(.95);
 Что рекламируем?
 </label>
 
-<input placeholder="Описание рекламы">
+<input id="description" placeholder="Описание рекламы">
 
 
 
@@ -371,7 +338,7 @@ transform:scale(.95);
 Ссылка
 </label>
 
-<input placeholder="https://...">
+<input id="link" placeholder="https://...">
 
 
 
@@ -379,7 +346,7 @@ transform:scale(.95);
 Текст поста на канале
 </label>
 
-<textarea placeholder="Текст, который должен будет появиться в канале"></textarea>
+<textarea id="postText" placeholder="Текст, который должен будет появиться в канале"></textarea>
 
 
 
@@ -388,7 +355,7 @@ transform:scale(.95);
 </label>
 
 
-<select>
+<select id="duration">
 
 <option>
 1 день
@@ -410,9 +377,6 @@ transform:scale(.95);
 
 
 
-<div 
-
-
 <div class="send" onclick="sendRequest()">
 
 🚀 Отправить заявку
@@ -420,19 +384,76 @@ transform:scale(.95);
 </div>
 
 
+
 </div>
+
+
+</div>
+
+
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 
 <script>
 
+
+const tg = window.Telegram.WebApp;
+
+tg.ready();
+
+
+
 function sendRequest(){
 
-alert("✅ Заявка отправлена на проверку администрации!");
+
+const project =
+document.getElementById("project").value;
+
+
+const description =
+document.getElementById("description").value;
+
+
+const link =
+document.getElementById("link").value;
+
+
+const postText =
+document.getElementById("postText").value;
+
+
+const duration =
+document.getElementById("duration").value;
+
+
+
+if(!project || !description){
+
+
+alert("Заполните название проекта и описание рекламы");
+
+
+return;
+
 
 }
+
+
+
+alert(
+"✅ Заявка отправлена на проверку!"
+);
+
+
+
+}
+
+
 
 </script>
 
 
 </body>
+
 </html>
