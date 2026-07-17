@@ -20,6 +20,21 @@ app.post("/send", async (req,res)=>{
 
 
 const data = req.body;
+await supabase
+.from("applications")
+.insert([
+{
+telegram_id: data.telegramId,
+username: data.username,
+name: data.name,
+project: data.project,
+description: data.description,
+link: data.link,
+post_text: data.postText,
+duration: data.duration,
+status: "pending"
+}
+]);
 
 
 const message = `
