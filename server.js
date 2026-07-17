@@ -8,6 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static("public"));
+
 
 const TOKEN = process.env.BOT_TOKEN;
 const ADMIN = process.env.ADMIN_ID;
