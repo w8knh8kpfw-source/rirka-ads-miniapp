@@ -121,6 +121,9 @@ success:true
 
 });
 
+app.get("/test", (req,res)=>{
+    res.send("работает");
+});
 
 app.listen(3000,()=>{
 app.post("/telegram", async (req,res)=>{
