@@ -718,6 +718,12 @@ transform:scale(.9);
 </div>
 
 
+<div id="welcome" style="
+margin-top:20px;
+font-size:18px;
+font-weight:600;
+">
+</div>
 
 
 <div class="hero">
@@ -727,7 +733,6 @@ transform:scale(.9);
 Реклама.<br>
 Новый уровень.
 </h1>
-
 
 <p>
 Создавайте заявки и получайте размещение через проверку администрации.
@@ -840,6 +845,13 @@ document.getElementById("userPhoto").src = user.photo_url;
 
 }
 
+
+if(user){
+
+document.getElementById("welcome").innerText =
+"Привет, " + (user.first_name || "пользователь") + " 👋";
+
+}
 </script>
 
 
