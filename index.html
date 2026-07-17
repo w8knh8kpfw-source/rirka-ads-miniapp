@@ -9,7 +9,6 @@
 
 <title>RIRKA Ads</title>
 
-
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
 
@@ -28,6 +27,7 @@ box-sizing:border-box;
 }
 
 
+
 body{
 
 margin:0;
@@ -36,7 +36,6 @@ min-height:100vh;
 
 
 font-family:
-
 "Inter",
 -apple-system,
 BlinkMacSystemFont,
@@ -54,13 +53,14 @@ background:
 
 
 radial-gradient(
-circle at 50% 35%,
+circle at 50% 40%,
 rgba(255,255,255,.95),
-transparent 32%
+transparent 35%
 ),
 
 
-#eeeeF3;
+#f1f1f6;
+
 
 
 }
@@ -68,51 +68,41 @@ transparent 32%
 
 
 /* =====================
-   МАТОВЫЕ ЦВЕТНЫЕ СФЕРЫ
+   SOFT LIQUID BACKGROUND
 ===================== */
 
 
 .orb{
 
-
 position:fixed;
-
 
 border-radius:50%;
 
+filter:blur(120px);
 
-filter:blur(110px);
-
-
-opacity:.35;
-
+opacity:.28;
 
 z-index:-1;
-
 
 }
 
 
 
 
+
 .orb.blue{
 
+width:500px;
 
-width:520px;
-
-height:520px;
+height:500px;
 
 
 top:-180px;
 
-left:-180px;
+left:-170px;
 
 
-
-background:
-
-#8bbcff;
-
+background:#9cc8ff;
 
 
 animation:
@@ -120,35 +110,32 @@ animation:
 blueMove 35s infinite alternate ease-in-out;
 
 
-
 }
+
+
 
 
 
 .orb.purple{
 
 
-width:550px;
+width:520px;
 
-height:550px;
-
-
-
-right:-220px;
-
-bottom:-220px;
+height:520px;
 
 
+right:-200px;
 
-background:
+bottom:-200px;
 
-#d8b4ff;
+
+background:#d9c2ff;
 
 
 
 animation:
 
-purpleMove 42s infinite alternate ease-in-out;
+purpleMove 45s infinite alternate ease-in-out;
 
 
 
@@ -160,10 +147,9 @@ purpleMove 42s infinite alternate ease-in-out;
 .orb.green{
 
 
-width:350px;
+width:320px;
 
-height:350px;
-
+height:320px;
 
 
 left:35%;
@@ -172,19 +158,18 @@ left:35%;
 top:50%;
 
 
-
-background:
-
-#a7eee5;
+background:#b9eee5;
 
 
 
 animation:
 
-greenMove 50s infinite alternate ease-in-out;
+greenMove 55s infinite alternate ease-in-out;
+
 
 
 }
+
 
 
 
@@ -193,78 +178,64 @@ greenMove 50s infinite alternate ease-in-out;
 @keyframes blueMove{
 
 
-0%{
+from{
 
 transform:translate(0,0);
 
 }
 
 
-100%{
+to{
 
-transform:
-
-translate(120px,100px);
+transform:translate(120px,90px);
 
 }
 
 
-
 }
-
-
 
 
 
 @keyframes purpleMove{
 
 
-0%{
+from{
 
 transform:translate(0,0);
 
 }
 
 
-100%{
+to{
 
-transform:
-
-translate(-120px,-80px);
+transform:translate(-100px,-90px);
 
 }
 
 
-
 }
+
 
 
 
 @keyframes greenMove{
 
 
-0%{
+from{
 
-transform:
-
-translate(-50px,40px);
+transform:translate(-50px,20px);
 
 }
 
 
-100%{
+to{
 
-transform:
-
-translate(80px,-80px);
+transform:translate(70px,-80px);
 
 }
 
 
-
 }
-
-
 
 
 
@@ -287,6 +258,7 @@ padding:
 25px 20px 150px;
 
 
+
 }
    /* =====================
         BRAND
@@ -295,13 +267,11 @@ padding:
 
 .header{
 
-
 display:flex;
-
-justify-content:space-between;
 
 align-items:center;
 
+justify-content:space-between;
 
 }
 
@@ -309,12 +279,10 @@ align-items:center;
 
 .brand{
 
-
 position:relative;
 
 
 font-size:32px;
-
 
 font-weight:800;
 
@@ -322,12 +290,7 @@ font-weight:800;
 letter-spacing:-2px;
 
 
-line-height:1;
-
-
-
 }
-
 
 
 
@@ -337,10 +300,10 @@ line-height:1;
 position:absolute;
 
 
-top:-7px;
+top:-6px;
 
 
-right:-34px;
+right:-36px;
 
 
 
@@ -354,8 +317,7 @@ letter-spacing:1px;
 
 
 
-padding:5px 8px;
-
+padding:5px 9px;
 
 
 border-radius:14px;
@@ -380,14 +342,20 @@ border:
 
 
 
-color:#6e6e73;
-
+color:#777;
 
 
 }
 
 
 
+
+
+
+
+/* =====================
+        AVATAR
+===================== */
 
 
 .avatar{
@@ -415,7 +383,7 @@ rgba(255,255,255,.3);
 
 backdrop-filter:
 
-blur(50px);
+blur(60px);
 
 
 
@@ -427,11 +395,12 @@ border:
 
 box-shadow:
 
-0 20px 50px rgba(0,0,0,.12);
+0 20px 50px rgba(0,0,0,.1);
 
 
 
 }
+
 
 
 
@@ -454,8 +423,10 @@ object-fit:cover;
 
 
 
+
+
 /* =====================
-      WELCOME
+       WELCOME
 ===================== */
 
 
@@ -483,7 +454,8 @@ filter:blur(10px);
 
 animation:
 
-welcomeAppear 1.2s forwards;
+
+welcomeShow 1.2s forwards;
 
 
 
@@ -492,12 +464,15 @@ welcomeAppear 1.2s forwards;
 
 
 
-@keyframes welcomeAppear{
+
+@keyframes welcomeShow{
 
 
 from{
 
+
 opacity:0;
+
 
 transform:
 
@@ -508,6 +483,7 @@ filter:blur(12px);
 
 
 }
+
 
 
 to{
@@ -524,12 +500,12 @@ translateY(0);
 filter:blur(0);
 
 
+}
+
 
 }
 
 
-
-}
 
 
 
@@ -553,13 +529,14 @@ margin-top:55px;
 
 
 
+
 .hero h1{
 
 
 font-size:44px;
 
 
-line-height:1.05;
+line-height:1.08;
 
 
 letter-spacing:-3px;
@@ -571,7 +548,6 @@ font-weight:800;
 margin:0;
 
 
-
 }
 
 
@@ -580,17 +556,19 @@ margin:0;
 .typing{
 
 
-display:inline-block;
+display:inline;
 
 
 }
 
 
 
+
+
 .hero p{
 
 
-margin-top:20px;
+margin-top:22px;
 
 
 font-size:18px;
@@ -608,31 +586,32 @@ opacity:0;
 
 animation:
 
-textAppear 1.5s 2s forwards;
-
+fadeText 1.4s 2s forwards;
 
 
 }
 
 
 
-@keyframes textAppear{
+
+
+@keyframes fadeText{
 
 
 from{
 
 opacity:0;
 
-
 transform:
 
 translateY(20px);
 
 
-filter:blur(8px);
+filter:blur(10px);
 
 
 }
+
 
 
 to{
@@ -659,8 +638,11 @@ filter:blur(0);
 
 
 
+
+
+
 /* =====================
-      GLASS CARD
+        GLASS CARD
 ===================== */
 
 
@@ -685,7 +667,9 @@ linear-gradient(
 
 135deg,
 
-rgba(255,255,255,.5),
+
+rgba(255,255,255,.48),
+
 
 rgba(255,255,255,.12)
 
@@ -712,10 +696,11 @@ saturate(220%);
 
 
 
+
 border:
 
-
 1px solid rgba(255,255,255,.75);
+
 
 
 
@@ -723,22 +708,20 @@ border:
 box-shadow:
 
 
-inset 0 2px 8px rgba(255,255,255,.9),
+inset 0 2px 10px rgba(255,255,255,.9),
 
 
-0 50px 120px rgba(0,0,0,.14);
+0 50px 120px rgba(0,0,0,.13);
 
-
-
-position:relative;
 
 
 overflow:hidden;
 
 
+position:relative;
+
 
 }
-
 
 
 
@@ -755,7 +738,7 @@ position:absolute;
 top:-150%;
 
 
-left:-100%;
+left:-120%;
 
 
 width:90%;
@@ -766,6 +749,7 @@ height:350%;
 
 
 background:
+
 
 linear-gradient(
 
@@ -787,28 +771,26 @@ transform:rotate(25deg);
 
 animation:
 
-glassMove 12s infinite;
-
+reflection 12s infinite;
 
 
 }
 
 
 
-@keyframes glassMove{
+
+@keyframes reflection{
 
 
 0%{
 
 left:-120%;
 
-
 }
 
 
 35%,
 100%{
-
 
 left:150%;
 
@@ -834,7 +816,6 @@ font-weight:800;
 letter-spacing:-1px;
 
 
-
 position:relative;
 
 
@@ -842,6 +823,8 @@ z-index:2;
 
 
 }
+
+
 
 
 
@@ -860,6 +843,7 @@ line-height:1.5;
 color:#6e6e73;
 
 
+
 position:relative;
 
 
@@ -875,13 +859,13 @@ z-index:2;
 .create-box{
 
 
-margin-top:30px;
+margin-top:32px;
 
 
-height:70px;
+height:72px;
 
 
-border-radius:35px;
+border-radius:36px;
 
 
 
@@ -898,7 +882,7 @@ justify-content:center;
 background:
 
 
-rgba(255,255,255,.32);
+rgba(255,255,255,.28);
 
 
 
@@ -912,62 +896,91 @@ border:
 backdrop-filter:
 
 
-blur(50px);
+blur(60px);
 
 
 
 box-shadow:
 
 
-inset 0 2px 8px rgba(255,255,255,.8),
+inset 0 2px 8px rgba(255,255,255,.85),
 
 
 0 25px 70px rgba(0,0,0,.12);
 
 
 
-overflow:hidden;
-
-
 position:relative;
 
 
+overflow:hidden;
+
+
+
+cursor:pointer;
+
 
 }
+
+
 
 
 
 .handwrite{
 
 
-font-family:"Caveat", cursive;
+font-family:
+
+"Caveat",
+cursive;
 
 
 
-font-size:38px;
+font-size:42px;
 
 
 font-weight:700;
 
 
-letter-spacing:1px;
 
+letter-spacing:.5px;
 
-width:0;
 
 
 white-space:nowrap;
 
 
 
-overflow:hidden;
+opacity:0;
 
 
 
 animation:
 
+inkAppear 3s ease forwards;
 
-write 3s steps(18) forwards;
+
+
+}
+
+
+
+
+@keyframes inkAppear{
+
+
+0%{
+
+
+opacity:0;
+
+
+filter:blur(6px);
+
+
+transform:
+
+translateY(8px);
 
 
 
@@ -975,27 +988,41 @@ write 3s steps(18) forwards;
 
 
 
-@keyframes write{
+30%{
 
 
-from{
-
-width:0;
+opacity:.4;
 
 
-}
-
-
-to{
-
-width:230px;
+filter:blur(2px);
 
 
 }
 
 
 
+100%{
+
+
+opacity:1;
+
+
+filter:blur(0);
+
+
+transform:
+
+translateY(0);
+
+
 }
+
+
+
+}
+
+
+
 
 
 
@@ -1012,6 +1039,7 @@ position:absolute;
 inset:0;
 
 
+
 background:
 
 
@@ -1021,7 +1049,7 @@ linear-gradient(
 
 transparent,
 
-rgba(255,255,255,.7),
+rgba(255,255,255,.65),
 
 transparent
 
@@ -1038,8 +1066,7 @@ translateX(-120%);
 animation:
 
 
-buttonShine 8s infinite;
-
+buttonGlow 9s infinite;
 
 
 }
@@ -1047,31 +1074,35 @@ buttonShine 8s infinite;
 
 
 
-@keyframes buttonShine{
+@keyframes buttonGlow{
 
 
 0%{
+
 
 transform:
 
 translateX(-120%);
 
+
 }
 
 
-
-40%,
+35%,
 100%{
+
 
 transform:
 
 translateX(120%);
 
+
+}
+
+
 }
 
 
-
-}
 
 
 
@@ -1081,9 +1112,8 @@ translateX(120%);
 
 
 /* =====================
-        RULES
+          RULES
 ===================== */
-
 
 
 .rules{
@@ -1099,19 +1129,10 @@ border-radius:42px;
 
 
 
-
 background:
 
 
-linear-gradient(
-
-135deg,
-
-rgba(255,255,255,.38),
-
-rgba(255,255,255,.12)
-
-);
+rgba(255,255,255,.22);
 
 
 
@@ -1125,7 +1146,7 @@ blur(90px);
 border:
 
 
-1px solid rgba(255,255,255,.7);
+1px solid rgba(255,255,255,.65);
 
 
 
@@ -1135,11 +1156,12 @@ box-shadow:
 0 40px 100px rgba(0,0,0,.12),
 
 
-inset 0 2px 7px rgba(255,255,255,.9);
-
+inset 0 2px 8px rgba(255,255,255,.8);
 
 
 }
+
+
 
 
 
@@ -1148,7 +1170,10 @@ inset 0 2px 7px rgba(255,255,255,.9);
 .rules h2{
 
 
-font-size:28px;
+font-size:27px;
+
+
+font-weight:800;
 
 
 letter-spacing:-1px;
@@ -1157,13 +1182,13 @@ letter-spacing:-1px;
 margin:0;
 
 
-
 }
 
 
 
 
-.rules p.head{
+
+.rules-head{
 
 
 margin-top:8px;
@@ -1172,10 +1197,14 @@ margin-top:8px;
 color:#6e6e73;
 
 
-font-size:16px;
+font-size:15px;
 
 
 }
+
+
+
+
 
 
 
@@ -1189,14 +1218,14 @@ margin-top:20px;
 padding:20px;
 
 
-border-radius:28px;
+border-radius:30px;
 
 
 
 background:
 
 
-rgba(255,255,255,.25);
+rgba(255,255,255,.22);
 
 
 
@@ -1212,21 +1241,7 @@ border:
 
 
 
-.rule-icon{
-
-
-font-size:30px;
-
-
-}
-
-
-
-
 .rule-title{
-
-
-margin-top:10px;
 
 
 font-size:19px;
@@ -1243,7 +1258,7 @@ font-weight:800;
 .rule-text{
 
 
-margin-top:7px;
+margin-top:8px;
 
 
 font-size:15px;
@@ -1255,6 +1270,7 @@ line-height:1.5;
 color:#6e6e73;
 
 
+
 }
 
 
@@ -1264,8 +1280,11 @@ color:#6e6e73;
 
 
 
+
+
+
 /* =====================
-       STATUS
+          STATUS
 ===================== */
 
 
@@ -1282,6 +1301,7 @@ font-weight:800;
 
 
 letter-spacing:-1px;
+
 
 
 }
@@ -1311,26 +1331,18 @@ rgba(255,255,255,.25);
 backdrop-filter:
 
 
-blur(70px);
+blur(80px);
 
 
 
 border:
 
 
-1px solid rgba(255,255,255,.65);
+1px solid rgba(255,255,255,.6);
 
 
 
 color:#6e6e73;
-
-
-
-box-shadow:
-
-
-inset 0 2px 7px rgba(255,255,255,.8);
-
 
 
 }
@@ -1341,8 +1353,11 @@ inset 0 2px 7px rgba(255,255,255,.8);
 
 
 
+
+
+
 /* =====================
-        DOCK
+          APPLE DOCK
 ===================== */
 
 
@@ -1371,13 +1386,13 @@ max-width:390px;
 
 
 
-height:90px;
+height:88px;
 
 
-padding:12px;
+padding:10px;
 
 
-border-radius:48px;
+border-radius:46px;
 
 
 
@@ -1385,10 +1400,10 @@ border-radius:48px;
 display:flex;
 
 
-align-items:center;
-
-
 justify-content:space-around;
+
+
+align-items:center;
 
 
 
@@ -1397,7 +1412,7 @@ justify-content:space-around;
 background:
 
 
-rgba(255,255,255,.25);
+rgba(255,255,255,.28);
 
 
 
@@ -1408,22 +1423,28 @@ blur(90px);
 
 
 
+-webkit-backdrop-filter:
+
+
+blur(90px);
+
+
+
+
+
 border:
 
-
-1px solid rgba(255,255,255,.75);
-
+1px solid rgba(255,255,255,.7);
 
 
 
 box-shadow:
 
 
-0 35px 100px rgba(0,0,0,.18),
+0 30px 90px rgba(0,0,0,.15),
 
 
-inset 0 2px 8px rgba(255,255,255,.9);
-
+inset 0 2px 10px rgba(255,255,255,.9);
 
 
 }
@@ -1464,20 +1485,31 @@ font-size:12px;
 color:#8e8e93;
 
 
-transition:.3s;
+
+transition:.25s;
+
 
 
 }
+
+
 
 
 
 .icon{
 
 
-font-size:27px;
+font-size:25px;
+
+
+font-weight:300;
+
+
+opacity:.75;
 
 
 }
+
 
 
 
@@ -1488,14 +1520,23 @@ font-size:27px;
 background:
 
 
-rgba(255,255,255,.7);
+rgba(255,255,255,.55);
 
 
 
 color:#111;
 
 
+
+box-shadow:
+
+
+inset 0 0 35px rgba(255,255,255,.9);
+
+
 }
+
+
 
 
 
@@ -1507,7 +1548,6 @@ transform:
 scale(.9);
 
 
-
 }
    </style>
 
@@ -1517,18 +1557,13 @@ scale(.9);
 <body>
 
 
-
 <div class="orb blue"></div>
 <div class="orb purple"></div>
 <div class="orb green"></div>
 
 
 
-
-
 <div class="app">
-
-
 
 
 
@@ -1539,11 +1574,8 @@ scale(.9);
 
 RIRKA
 
-<span>
+<span>ADS</span>
 
-ADS
-
-</span>
 
 </div>
 
@@ -1555,7 +1587,6 @@ ADS
 <img id="userPhoto" src="">
 
 </div>
-
 
 
 </div>
@@ -1576,20 +1607,13 @@ ADS
 <div class="hero">
 
 
-
-<h1>
-
-<span class="typing" id="typingTitle"></span>
-
-
-</h1>
-
-
+<h1 id="typingTitle"></h1>
 
 
 <p>
 
-Ваша реклама — следующий шаг к аудитории.
+Ваша реклама — следующий шаг к аудитории.<br>
+
 Создайте заявку и получите размещение
 после проверки администрации.
 
@@ -1598,7 +1622,6 @@ ADS
 
 
 </div>
-
 
 
 
@@ -1618,25 +1641,26 @@ ADS
 
 
 
+
 <div class="card-text">
 
-Опишите ваш проект.
-Администрация проверит заявку
-и свяжется с вами.
+Расскажите о вашем проекте.
+Мы проверим заявку и предложим
+условия размещения.
 
 </div>
 
 
 
 
-<div class="create-box"
-onclick="openForm()">
+
+<div class="create-box" onclick="openForm()">
 
 
 
 <div class="handwrite">
 
-📝 Создать заявку
+Создать заявку
 
 </div>
 
@@ -1662,18 +1686,17 @@ onclick="openForm()">
 
 <h2>
 
-📖 Правила размещения
+Правила размещения
 
 </h2>
 
 
 
-
-<p class="head">
+<div class="rules-head">
 
 Что принимается и что отклоняется автоматически
 
-</p>
+</div>
 
 
 
@@ -1683,14 +1706,6 @@ onclick="openForm()">
 <div class="rule-card">
 
 
-<div class="rule-icon">
-
-🚫
-
-</div>
-
-
-
 <div class="rule-title">
 
 Отклоняется автоматически
@@ -1698,14 +1713,17 @@ onclick="openForm()">
 </div>
 
 
-
 <div class="rule-text">
 
 
 Продажа товаров и услуг.<br>
+
 Нарушение правил Telegram.<br>
+
 Оскорбительный контент.<br>
+
 Реферальные ссылки.<br>
+
 VPN и обход ограничений.
 
 
@@ -1722,16 +1740,7 @@ VPN и обход ограничений.
 
 
 
-
 <div class="rule-card">
-
-
-<div class="rule-icon">
-
-✅
-
-</div>
-
 
 
 <div class="rule-title">
@@ -1741,14 +1750,17 @@ VPN и обход ограничений.
 </div>
 
 
-
 <div class="rule-text">
 
 
-Личные проекты.<br>
+Авторские проекты.<br>
+
 Сайты и приложения.<br>
-Творчество и авторские работы.<br>
+
+Творческие работы.<br>
+
 Полезные сервисы.<br>
+
 Каналы и сообщества.
 
 
@@ -1781,12 +1793,12 @@ VPN и обход ограничений.
 
 
 
-
 <div class="status">
 
-⏳ Нет активных заявок
+Нет активных заявок
 
 </div>
+
 
 
 
@@ -1819,6 +1831,7 @@ onclick="location.href='index.html'">
 
 </div>
 
+
 Главная
 
 
@@ -1835,7 +1848,7 @@ onclick="location.href='applications.html'">
 
 <div class="icon">
 
-▤
+◌
 
 </div>
 
@@ -1856,7 +1869,7 @@ onclick="location.href='profile.html'">
 
 <div class="icon">
 
-◯
+○
 
 </div>
 
@@ -1868,11 +1881,7 @@ onclick="location.href='profile.html'">
 
 
 
-
-
-
 </div>
-
 
 
 
@@ -1908,8 +1917,7 @@ const user = tg.initDataUnsafe.user;
 if(user && user.photo_url){
 
 
-document.getElementById("userPhoto").src =
-user.photo_url;
+document.getElementById("userPhoto").src = user.photo_url;
 
 
 }
@@ -1919,20 +1927,22 @@ user.photo_url;
 
 
 
-
+/* приветствие */
 
 if(user){
 
 
 let text =
-"Привет, " + user.first_name + " 👋";
+
+"Привет, " + (user.first_name || "пользователь");
 
 
 
-let i=0;
+let i = 0;
 
 
-let box=document.getElementById("welcome");
+let box = document.getElementById("welcome");
+
 
 
 
@@ -1940,20 +1950,23 @@ let box=document.getElementById("welcome");
 function welcomeTyping(){
 
 
+
 if(i < text.length){
+
 
 
 box.innerHTML += text[i];
 
 
+
 i++;
 
 
-setTimeout(welcomeTyping,70);
+setTimeout(welcomeTyping,80);
+
 
 
 }
-
 
 
 }
@@ -1963,7 +1976,6 @@ setTimeout(welcomeTyping,70);
 welcomeTyping();
 
 
-
 }
 
 
@@ -1973,47 +1985,96 @@ welcomeTyping();
 
 
 
-const title =
 
-"Ваша реклама —<br>следующий шаг к аудитории.";
-
-
-
-
-let index=0;
-
-
-let target=document.getElementById("typingTitle");
+/* заголовок */
 
 
 
 
-
-function titleAnimation(){
-
-
-if(index < title.length){
+const lines = [
 
 
-
-target.innerHTML += title[index];
-
-
-index++;
+"Ваша реклама —",
 
 
-setTimeout(titleAnimation,55);
+"следующий шаг к аудитории."
+
+
+];
+
+
+
+let line = 0;
+
+let char = 0;
+
+
+let title = document.getElementById("typingTitle");
+
+
+
+
+
+function typeTitle(){
+
+
+
+if(line < lines.length){
+
+
+
+if(char < lines[line].length){
+
+
+
+title.innerHTML += lines[line][char];
+
+
+
+char++;
+
+
+
+setTimeout(typeTitle,65);
 
 
 
 }
 
 
+
+else{
+
+
+
+title.innerHTML += "<br>";
+
+
+line++;
+
+char=0;
+
+
+setTimeout(typeTitle,300);
+
+
+
 }
 
 
 
-titleAnimation();
+}
+
+
+
+}
+
+
+
+
+
+typeTitle();
+
 
 
 
@@ -2040,15 +2101,11 @@ tg.HapticFeedback.impactOccurred("medium");
 location.href="form.html";
 
 
-
 }
 
 
 
-
 </script>
-
-
 
 
 </body>
