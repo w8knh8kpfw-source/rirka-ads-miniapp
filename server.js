@@ -20,7 +20,7 @@ app.post("/send", async (req,res)=>{
 
 
 const data = req.body;
-await supabase
+const { error } = await supabase
 .from("applications")
 .insert([
 {
@@ -35,6 +35,10 @@ duration: data.duration,
 status: "pending"
 }
 ]);
+
+if(error){
+console.log("SUPABASE ERROR:", error);
+}
 
 
 const message = `
