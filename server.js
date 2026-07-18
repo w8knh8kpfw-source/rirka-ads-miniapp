@@ -7,44 +7,62 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
 app.use(express.static("public"));
-
 
 const TOKEN = process.env.BOT_TOKEN;
 const ADMIN = process.env.ADMIN_ID;
+
 const supabase = createClient(
-process.env.SUPABASE_URL,
-process.env.SUPABASE_KEY
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
 );
 
-app.post("/send", async (req,res)=>{
+
+// =========================
+// СОЗДАНИЕ ЗАЯВКИ
+// =========================
+
+app.post("/send", async (req, res) => {
+
+    try {
+
+        const data = req.body;
+
+        const { data: application, error } = await supabase
+            .from("applications")
+            .insert([
+                {
+                    telegram_id: data.telegramId,
+                    username: data.username,
+                    name: data.name,
+                    project: data.project,
+                    description: data.description,
+                    link: data.link,
+                    post_text: data.postText,
+                    duration: data.duration,
+                    status: "pending"
+                }
+            ])
+            .select()
+            .single();
 
 
-const data = req.body;
-const { error } = await supabase
-.from("applications")
-.insert([
-{
-telegram_id: data.telegramId,
-username: data.username,
-name: data.name,
-project: data.project,
-description: data.description,
-link: data.link,
-post_text: data.postText,
-duration: data.duration,
-status: "pending"
-}
-]);
+        if (error) {
 
-if(error){
-console.log("SUPABASE ERROR:", error);
-}
+            console.log("SUPABASE ERROR:", error);
+
+            return res.status(500).json({
+                success: false,
+                error: error.message
+            });
+
+        }
 
 
-const message = `
+        const message = `
 🆕 Новая заявка RIRKA Ads
+
+🆔 Заявка №${application.id}
 
 👤 Пользователь:
 ${data.name || "Не указано"}
@@ -62,112 +80,268 @@ ${data.project}
 ${data.description}
 
 🔗 Ссылка:
-${data.link}
+${data.link || "Нет"}
 
 📝 Текст поста:
-${data.postText}
+${data.postText || "Нет"}
 
 ⏳ Срок:
 ${data.duration}
 `;
 
 
+        await fetch(
+            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+            {
+                method: "POST",
 
-await fetch(
-`https://api.telegram.org/bot${TOKEN}/sendMessage`,
-{
-method:"POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-headers:{
-"Content-Type":"application/json"
-},
+                body: JSON.stringify({
 
-body:JSON.stringify({
+                    chat_id: ADMIN,
 
-chat_id:ADMIN,
+                    text: message,
 
-text:message,
+                    reply_markup: {
 
-reply_markup:{
-inline_keyboard:[
-[
-{
-text:"🟢 Одобрить",
-callback_data:"approve"
-},
-{
-text:"🟡 Поправить",
-callback_data:"edit"
-}
-],
-[
-{
-text:"🔴 Отклонить",
-callback_data:"reject"
-}
-]
-]
-}
+                        inline_keyboard: [
 
-})
+                            [
+
+                                {
+                                    text: "🟢 Одобрить",
+                                    callback_data:
+                                        `approve_${application.id}`
+                                },
+
+                                {
+                                    text: "🟡 Поправить",
+                                    callback_data:
+                                        `edit_${application.id}`
+                                }
+
+                            ],
+
+                            [
+
+                                {
+                                    text: "🔴 Отклонить",
+                                    callback_data:
+                                        `reject_${application.id}`
+                                }
+
+                            ]
+
+                        ]
+
+                    }
+
+                })
+
+            }
+
+        );
+
+
+        res.json({
+            success: true,
+            applicationId: application.id
+        });
+
+
+    } catch (error) {
+
+        console.log("SERVER ERROR:", error);
+
+        res.status(500).json({
+            success: false
+        });
+
+    }
+
+});
+
+
+// =========================
+// TELEGRAM WEBHOOK
+// =========================
+
+app.post("/telegram", async (req, res) => {
+
+    try {
+
+        const query = req.body.callback_query;
+
+        if (!query) {
+
+            return res.sendStatus(200);
+
+        }
+
+
+        const callbackData = query.data;
+
+        const [action, applicationId] =
+            callbackData.split("_");
+
+
+        const { data: application, error } =
+            await supabase
+
+                .from("applications")
+
+                .select("*")
+
+                .eq("id", applicationId)
+
+                .single();
+
+
+        if (error || !application) {
+
+            return res.sendStatus(200);
+
+        }
+
+
+        let status;
+
+        let text;
+
+
+        if (action === "approve") {
+
+            status = "approved";
+
+            text =
+                "✅ Ваша заявка одобрена RIRKA Ads!\n\n"
+                + "Скоро появится возможность оплатить размещение ⭐";
+
+        }
+
+
+        if (action === "edit") {
+
+            status = "edit";
+
+            text =
+                "✏️ Пожалуйста, исправьте заявку "
+                + "и отправьте её снова.";
+
+        }
+
+
+        if (action === "reject") {
+
+            status = "rejected";
+
+            text =
+                "❌ Ваша заявка отклонена RIRKA Ads.";
+
+        }
+
+
+        await supabase
+
+            .from("applications")
+
+            .update({
+                status: status
+            })
+
+            .eq("id", applicationId);
+
+
+        await fetch(
+
+            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    chat_id: application.telegram_id,
+
+                    text: text
+
+                })
+
+            }
+
+        );
+
+
+        await fetch(
+
+            `https://api.telegram.org/bot${TOKEN}/answerCallbackQuery`,
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    callback_query_id: query.id
+
+                })
+
+            }
+
+        );
+
+
+        res.sendStatus(200);
+
+
+    } catch (error) {
+
+        console.log("WEBHOOK ERROR:", error);
+
+        res.sendStatus(500);
+
+    }
 
 });
 
 
-res.json({
-success:true
-});
+// =========================
+// ТЕСТ
+// =========================
 
+app.get("/test", (req, res) => {
 
-});
-
-app.get("/test", (req,res)=>{
-    res.send("работает");
-});
-
-app.listen(3000,()=>{
-app.post("/telegram", async (req,res)=>{
-
-const query = req.body.callback_query;
-
-if(!query){
-return res.sendStatus(200);
-}
-
-const userId = query.message.text.match(/Telegram ID:\n(\d+)/)?.[1];
-
-let text = "";
-
-if(query.data === "approve"){
-text = "✅ Ваша заявка одобрена RIRKA Ads";
-}
-
-if(query.data === "edit"){
-text = "✏️ Пожалуйста, исправьте заявку и отправьте её снова";
-}
-
-if(query.data === "reject"){
-text = "❌ Ваша заявка отклонена RIRKA Ads";
-}
-
-
-await fetch(
-`https://api.telegram.org/bot${TOKEN}/sendMessage`,
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-chat_id:userId,
-text:text
-})
-});
-
-
-res.sendStatus(200);
+    res.send("RIRKA ADS SERVER WORKING");
 
 });
-console.log("Server started");
+
+
+// =========================
+// START SERVER
+// =========================
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+
+    console.log(
+        `RIRKA ADS SERVER STARTED ON PORT ${PORT}`
+    );
 
 });
