@@ -13,7 +13,7 @@ const TOKEN = process.env.BOT_TOKEN;
 const ADMIN = process.env.ADMIN_ID;
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 const supabase = createClient(
     SUPABASE_URL,
