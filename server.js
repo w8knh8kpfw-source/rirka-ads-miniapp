@@ -9,7 +9,29 @@ app.use(express.json());
 app.use(express.static("public"));
 
 const TOKEN = process.env.BOT_TOKEN;
-const ADMIN = process.env.ADMIN_ID;
+const ADMIN = String(process.env.ADMIN_ID);
+
+const pendingPrices = new Map();
+
+
+// =========================
+// TELEGRAM API
+// =========================
+
+async function telegram(method, data) {
+    const response = await fetch(
+        `https://api.telegram.org/bot${TOKEN}/${method}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }
+    );
+
+    return await response.json();
+}
 
 
 // =========================
@@ -54,91 +76,63 @@ ${data.duration || "Не указан"}
 `;
 
 
-        const telegramResponse = await fetch(
-            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-            {
-                method: "POST",
+        await telegram("sendMessage", {
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+            chat_id: ADMIN,
 
-                body: JSON.stringify({
+            text: message,
 
-                    chat_id: ADMIN,
+            reply_markup: {
 
-                    text: message,
+                inline_keyboard: [
 
-                    reply_markup: {
+                    [
 
-                        inline_keyboard: [
+                        {
+                            text: "🟢 Одобрить",
 
-                            [
+                            callback_data:
+                                `approve_${data.telegramId}`
+                        },
 
-                                {
-                                    text: "🟢 Одобрить",
-                                    callback_data:
-                                        `approve_${data.telegramId}`
-                                },
+                        {
+                            text: "🟡 Поправить",
 
-                                {
-                                    text: "🟡 Поправить",
-                                    callback_data:
-                                        `edit_${data.telegramId}`
-                                }
+                            callback_data:
+                                `edit_${data.telegramId}`
+                        }
 
-                            ],
+                    ],
 
-                            [
+                    [
 
-                                {
-                                    text: "🔴 Отклонить",
-                                    callback_data:
-                                        `reject_${data.telegramId}`
-                                }
+                        {
+                            text: "🔴 Отклонить",
 
-                            ]
+                            callback_data:
+                                `reject_${data.telegramId}`
+                        }
 
-                        ]
+                    ]
 
-                    }
-
-                })
+                ]
 
             }
 
-        );
-
-
-        const telegramResult =
-            await telegramResponse.json();
-
-
-        console.log(
-            "TELEGRAM RESPONSE:",
-            telegramResult
-        );
+        });
 
 
         res.json({
-
             success: true
-
         });
 
 
     } catch (error) {
 
-        console.log(
-            "SERVER ERROR:",
-            error
-        );
-
+        console.log("SERVER ERROR:", error);
 
         res.status(500).json({
-
             success: false
-
         });
 
     }
@@ -154,105 +148,395 @@ app.post("/telegram", async (req, res) => {
 
     try {
 
-        const query =
-            req.body.callback_query;
+        const update = req.body;
 
 
-        if (!query) {
+        // ========================================
+        // УСПЕШНАЯ ОПЛАТА
+        // ========================================
+
+        if (
+            update.message &&
+            update.message.successful_payment
+        ) {
+
+            const message =
+                update.message;
+
+            const payment =
+                message.successful_payment;
+
+            const payload =
+                payment.invoice_payload;
+
+            const parts =
+                payload.split(":");
+
+            const userId =
+                parts[1];
+
+
+            console.log(
+                "SUCCESSFUL PAYMENT:",
+                payment
+            );
+
+
+            await telegram("sendMessage", {
+
+                chat_id: ADMIN,
+
+                text:
+                    `💰 ОПЛАТА ПОЛУЧЕНА!\n\n`
+                    +
+                    `⭐️ Сумма: `
+                    +
+                    `${payment.total_amount}\n`
+                    +
+                    `🆔 Пользователь: `
+                    +
+                    `${userId}\n`
+                    +
+                    `💳 Платёж:\n`
+                    +
+                    `${payment.telegram_payment_charge_id}`
+
+            });
+
+
+            await telegram("sendMessage", {
+
+                chat_id: userId,
+
+                text:
+                    "✅ Оплата получена!\n\n"
+                    +
+                    "Ваша рекламная заявка принята в работу ⭐️"
+
+            });
+
 
             return res.sendStatus(200);
 
         }
 
 
-        const [action, userId] =
-            query.data.split("_");
+        // ========================================
+        // PRE-CHECKOUT
+        // ========================================
+
+        if (update.pre_checkout_query) {
+
+            const query =
+                update.pre_checkout_query;
 
 
-        let text = "";
+            await telegram(
+                "answerPreCheckoutQuery",
+                {
+
+                    pre_checkout_query_id:
+                        query.id,
+
+                    ok: true
+
+                }
+            );
 
 
-        if (action === "approve") {
-
-            text =
-                "✅ Ваша заявка одобрена RIRKA Ads!\n\n"
-                +
-                "Скоро появится возможность оплатить размещение ⭐️";
-
-        }
-
-
-        if (action === "edit") {
-
-            text =
-                "✏️ Пожалуйста, исправьте заявку "
-                +
-                "и отправьте её снова.";
-
-        }
-
-
-        if (action === "reject") {
-
-            text =
-                "❌ Ваша заявка отклонена RIRKA Ads.";
+            return res.sendStatus(200);
 
         }
 
 
-        await fetch(
+        // ========================================
+        // СООБЩЕНИЕ ОТ АДМИНА
+        // ========================================
 
-            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+        if (
+            update.message &&
+            update.message.from &&
+            update.message.text
+        ) {
 
-            {
+            const message =
+                update.message;
 
-                method: "POST",
 
-                headers: {
+            const adminId =
+                String(message.from.id);
 
-                    "Content-Type":
-                        "application/json"
 
-                },
+            if (
+                adminId === ADMIN
+            ) {
 
-                body: JSON.stringify({
+                const userId =
+                    pendingPrices.get(ADMIN);
 
-                    chat_id: userId,
 
-                    text: text
+                if (userId) {
 
-                })
+                    const amount =
+                        parseInt(
+                            message.text
+                        );
+
+
+                    if (
+                        isNaN(amount) ||
+                        amount < 1
+                    ) {
+
+                        await telegram(
+                            "sendMessage",
+                            {
+
+                                chat_id: ADMIN,
+
+                                text:
+                                    "❌ Введите сумму целым числом ⭐️\n\n"
+                                    +
+                                    "Например: 50"
+
+                            }
+                        );
+
+
+                        return res.sendStatus(200);
+
+                    }
+
+
+                    pendingPrices.delete(
+                        ADMIN
+                    );
+
+
+                    const payload =
+                        `ad:${userId}:${amount}`;
+
+
+                    await telegram(
+                        "sendInvoice",
+                        {
+
+                            chat_id: userId,
+
+                            title:
+                                "Размещение рекламы RIRKA Ads",
+
+                            description:
+                                "Оплата рекламного размещения.",
+
+                            payload:
+                                payload,
+
+                            currency:
+                                "XTR",
+
+                            prices: [
+
+                                {
+
+                                    label:
+                                        "Рекламное размещение",
+
+                                    amount:
+                                        amount
+
+                                }
+
+                            ],
+
+                            start_parameter:
+                                `rirka_ads_${Date.now()}`
+
+                        }
+                    );
+
+
+                    await telegram(
+                        "sendMessage",
+                        {
+
+                            chat_id: ADMIN,
+
+                            text:
+                                `✅ Инвойс на ${amount} ⭐️ отправлен рекламодателю.`
+
+                        }
+                    );
+
+
+                    return res.sendStatus(200);
+
+                }
 
             }
 
-        );
+        }
 
 
-        await fetch(
+        // ========================================
+        // CALLBACK-КНОПКИ
+        // ========================================
 
-            `https://api.telegram.org/bot${TOKEN}/answerCallbackQuery`,
+        if (
+            !update.callback_query
+        ) {
 
-            {
+            return res.sendStatus(200);
 
-                method: "POST",
+        }
 
-                headers: {
 
-                    "Content-Type":
-                        "application/json"
+        const query =
+            update.callback_query;
 
-                },
 
-                body: JSON.stringify({
+        const callbackData =
+            query.data;
+
+
+        const parts =
+            callbackData.split("_");
+
+
+        const action =
+            parts[0];
+
+        const userId =
+            parts[1];
+
+
+        // ========================================
+        // ОДОБРИТЬ
+        // ========================================
+
+        if (
+            action === "approve"
+        ) {
+
+
+            pendingPrices.set(
+                ADMIN,
+                userId
+            );
+
+
+            await telegram(
+                "sendMessage",
+                {
+
+                    chat_id: ADMIN,
+
+                    text:
+                        "💰 Введи стоимость размещения в ⭐️\n\n"
+                        +
+                        "Например:\n"
+                        +
+                        "50"
+
+                }
+            );
+
+
+            await telegram(
+                "answerCallbackQuery",
+                {
+
+                    callback_query_id:
+                        query.id,
+
+                    text:
+                        "Ожидаю стоимость ⭐️"
+
+                }
+            );
+
+
+            return res.sendStatus(200);
+
+        }
+
+
+        // ========================================
+        // ПОПРАВИТЬ
+        // ========================================
+
+        if (
+            action === "edit"
+        ) {
+
+
+            await telegram(
+                "sendMessage",
+                {
+
+                    chat_id: userId,
+
+                    text:
+                        "✏️ Пожалуйста, исправьте заявку "
+                        +
+                        "и отправьте её снова."
+
+                }
+            );
+
+
+            await telegram(
+                "answerCallbackQuery",
+                {
 
                     callback_query_id:
                         query.id
 
-                })
+                }
+            );
 
-            }
 
-        );
+            return res.sendStatus(200);
+
+        }
+
+
+        // ========================================
+        // ОТКЛОНИТЬ
+        // ========================================
+
+        if (
+            action === "reject"
+        ) {
+
+
+            await telegram(
+                "sendMessage",
+                {
+
+                    chat_id: userId,
+
+                    text:
+                        "❌ Ваша заявка отклонена RIRKA Ads."
+
+                }
+            );
+
+
+            await telegram(
+                "answerCallbackQuery",
+                {
+
+                    callback_query_id:
+                        query.id
+
+                }
+            );
+
+
+            return res.sendStatus(200);
+
+        }
 
 
         res.sendStatus(200);
@@ -261,13 +545,9 @@ app.post("/telegram", async (req, res) => {
     } catch (error) {
 
         console.log(
-
             "WEBHOOK ERROR:",
-
             error
-
         );
-
 
         res.sendStatus(500);
 
@@ -290,19 +570,20 @@ app.get("/test", (req, res) => {
 
 
 // =========================
-// START SERVER
+// START
 // =========================
 
 const PORT =
     process.env.PORT || 3000;
 
 
-app.listen(PORT, () => {
+app.listen(
+    PORT,
+    () => {
 
-    console.log(
+        console.log(
+            `RIRKA ADS SERVER STARTED ON PORT ${PORT}`
+        );
 
-        `RIRKA ADS SERVER STARTED ON PORT ${PORT}`
-
-    );
-
-});
+    }
+);
