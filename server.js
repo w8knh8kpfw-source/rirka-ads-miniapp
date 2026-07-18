@@ -12,9 +12,12 @@ app.use(express.static("public"));
 const TOKEN = process.env.BOT_TOKEN;
 const ADMIN = process.env.ADMIN_ID;
 
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
 const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
@@ -28,21 +31,23 @@ app.post("/send", async (req, res) => {
 
         const data = req.body;
 
+        console.log("NEW APPLICATION RECEIVED");
+
         const { data: application, error } = await supabase
             .from("applications")
-            .insert([
-                {
-                    telegram_id: data.telegramId,
-                    username: data.username,
-                    name: data.name,
-                    project: data.project,
-                    description: data.description,
-                    link: data.link,
-                    post_text: data.postText,
-                    duration: data.duration,
-                    status: "pending"
-                }
-            ])
+            .insert({
+                telegram_id: data.telegramId,
+                username: data.username,
+                name: data.name,
+
+                project: data.project,
+                description: data.description,
+                link: data.link,
+                post_text: data.postText,
+                duration: data.duration,
+
+                status: "pending"
+            })
             .select()
             .single();
 
@@ -57,6 +62,12 @@ app.post("/send", async (req, res) => {
             });
 
         }
+
+
+        console.log(
+            "APPLICATION CREATED:",
+            application.id
+        );
 
 
         const message = `
@@ -90,7 +101,7 @@ ${data.duration}
 `;
 
 
-        await fetch(
+        const telegramResponse = await fetch(
             `https://api.telegram.org/bot${TOKEN}/sendMessage`,
             {
                 method: "POST",
@@ -113,12 +124,14 @@ ${data.duration}
 
                                 {
                                     text: "🟢 Одобрить",
+
                                     callback_data:
                                         `approve_${application.id}`
                                 },
 
                                 {
                                     text: "🟡 Поправить",
+
                                     callback_data:
                                         `edit_${application.id}`
                                 }
@@ -129,6 +142,7 @@ ${data.duration}
 
                                 {
                                     text: "🔴 Отклонить",
+
                                     callback_data:
                                         `reject_${application.id}`
                                 }
@@ -146,18 +160,39 @@ ${data.duration}
         );
 
 
+        const telegramResult =
+            await telegramResponse.json();
+
+
+        console.log(
+            "TELEGRAM RESULT:",
+            telegramResult
+        );
+
+
         res.json({
+
             success: true,
-            applicationId: application.id
+
+            applicationId:
+                application.id
+
         });
 
 
     } catch (error) {
 
-        console.log("SERVER ERROR:", error);
+        console.log(
+            "SERVER ERROR:",
+            error
+        );
 
         res.status(500).json({
-            success: false
+
+            success: false,
+
+            error: error.message
+
         });
 
     }
@@ -173,7 +208,9 @@ app.post("/telegram", async (req, res) => {
 
     try {
 
-        const query = req.body.callback_query;
+        const query =
+            req.body.callback_query;
+
 
         if (!query) {
 
@@ -182,25 +219,42 @@ app.post("/telegram", async (req, res) => {
         }
 
 
-        const callbackData = query.data;
+        const callbackData =
+            query.data;
 
-        const [action, applicationId] =
+
+        const parts =
             callbackData.split("_");
 
 
-        const { data: application, error } =
-            await supabase
+        const action =
+            parts[0];
 
-                .from("applications")
 
-                .select("*")
+        const applicationId =
+            parts[1];
 
-                .eq("id", applicationId)
 
-                .single();
+        const {
+            data: application,
+            error
+        } = await supabase
+
+            .from("applications")
+
+            .select("*")
+
+            .eq("id", applicationId)
+
+            .single();
 
 
         if (error || !application) {
+
+            console.log(
+                "APPLICATION NOT FOUND:",
+                applicationId
+            );
 
             return res.sendStatus(200);
 
@@ -214,29 +268,39 @@ app.post("/telegram", async (req, res) => {
 
         if (action === "approve") {
 
-            status = "approved";
+            status =
+                "approved";
+
 
             text =
-                "✅ Ваша заявка одобрена RIRKA Ads!\n\n"
-                + "Скоро появится возможность оплатить размещение ⭐";
+                "✅ Ваша заявка одобрена RIRKA Ads!\n\n" +
+
+                "Скоро появится возможность " +
+
+                "оплатить размещение ⭐";
 
         }
 
 
         if (action === "edit") {
 
-            status = "edit";
+            status =
+                "edit";
+
 
             text =
-                "✏️ Пожалуйста, исправьте заявку "
-                + "и отправьте её снова.";
+                "✏️ Пожалуйста, исправьте заявку " +
+
+                "и отправьте её снова.";
 
         }
 
 
         if (action === "reject") {
 
-            status = "rejected";
+            status =
+                "rejected";
+
 
             text =
                 "❌ Ваша заявка отклонена RIRKA Ads.";
@@ -249,10 +313,16 @@ app.post("/telegram", async (req, res) => {
             .from("applications")
 
             .update({
-                status: status
+
+                status:
+                    status
+
             })
 
-            .eq("id", applicationId);
+            .eq(
+                "id",
+                applicationId
+            );
 
 
         await fetch(
@@ -265,15 +335,18 @@ app.post("/telegram", async (req, res) => {
 
                 headers: {
 
-                    "Content-Type": "application/json"
+                    "Content-Type":
+                        "application/json"
 
                 },
 
                 body: JSON.stringify({
 
-                    chat_id: application.telegram_id,
+                    chat_id:
+                        application.telegram_id,
 
-                    text: text
+                    text:
+                        text
 
                 })
 
@@ -292,13 +365,15 @@ app.post("/telegram", async (req, res) => {
 
                 headers: {
 
-                    "Content-Type": "application/json"
+                    "Content-Type":
+                        "application/json"
 
                 },
 
                 body: JSON.stringify({
 
-                    callback_query_id: query.id
+                    callback_query_id:
+                        query.id
 
                 })
 
@@ -312,7 +387,10 @@ app.post("/telegram", async (req, res) => {
 
     } catch (error) {
 
-        console.log("WEBHOOK ERROR:", error);
+        console.log(
+            "WEBHOOK ERROR:",
+            error
+        );
 
         res.sendStatus(500);
 
@@ -322,26 +400,35 @@ app.post("/telegram", async (req, res) => {
 
 
 // =========================
-// ТЕСТ
+// ПРОВЕРКА СЕРВЕРА
 // =========================
 
 app.get("/test", (req, res) => {
 
-    res.send("RIRKA ADS SERVER WORKING");
-
-});
-
-
-// =========================
-// START SERVER
-// =========================
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-
-    console.log(
-        `RIRKA ADS SERVER STARTED ON PORT ${PORT}`
+    res.send(
+        "RIRKA ADS SERVER WORKING"
     );
 
 });
+
+
+// =========================
+// ЗАПУСК СЕРВЕРА
+// =========================
+
+const PORT =
+    process.env.PORT || 3000;
+
+
+app.listen(
+    PORT,
+
+    () => {
+
+        console.log(
+            `RIRKA ADS SERVER STARTED ON PORT ${PORT}`
+        );
+
+    }
+
+);
