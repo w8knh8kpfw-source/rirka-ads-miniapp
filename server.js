@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch");
-const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
 
@@ -12,17 +11,9 @@ app.use(express.static("public"));
 const TOKEN = process.env.BOT_TOKEN;
 const ADMIN = process.env.ADMIN_ID;
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
-
-const supabase = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
 
 // =========================
-// СОЗДАНИЕ ЗАЯВКИ
+// НОВАЯ ЗАЯВКА
 // =========================
 
 app.post("/send", async (req, res) => {
@@ -33,47 +24,9 @@ app.post("/send", async (req, res) => {
 
         console.log("NEW APPLICATION RECEIVED");
 
-        const { data: application, error } = await supabase
-            .from("applications")
-            .insert({
-                telegram_id: data.telegramId,
-                username: data.username,
-                name: data.name,
-
-                project: data.project,
-                description: data.description,
-                link: data.link,
-                post_text: data.postText,
-                duration: data.duration,
-
-                status: "pending"
-            })
-            .select()
-            .single();
-
-
-        if (error) {
-
-            console.log("SUPABASE ERROR:", error);
-
-            return res.status(500).json({
-                success: false,
-                error: error.message
-            });
-
-        }
-
-
-        console.log(
-            "APPLICATION CREATED:",
-            application.id
-        );
-
 
         const message = `
 🆕 Новая заявка RIRKA Ads
-
-🆔 Заявка №${application.id}
 
 👤 Пользователь:
 ${data.name || "Не указано"}
@@ -85,10 +38,10 @@ ${data.username ? "@" + data.username : "Нет"}
 ${data.telegramId || "Нет"}
 
 📌 Проект:
-${data.project}
+${data.project || "Не указано"}
 
 📢 Описание:
-${data.description}
+${data.description || "Не указано"}
 
 🔗 Ссылка:
 ${data.link || "Нет"}
@@ -97,7 +50,7 @@ ${data.link || "Нет"}
 ${data.postText || "Нет"}
 
 ⏳ Срок:
-${data.duration}
+${data.duration || "Не указан"}
 `;
 
 
@@ -124,16 +77,14 @@ ${data.duration}
 
                                 {
                                     text: "🟢 Одобрить",
-
                                     callback_data:
-                                        `approve_${application.id}`
+                                        `approve_${data.telegramId}`
                                 },
 
                                 {
                                     text: "🟡 Поправить",
-
                                     callback_data:
-                                        `edit_${application.id}`
+                                        `edit_${data.telegramId}`
                                 }
 
                             ],
@@ -142,9 +93,8 @@ ${data.duration}
 
                                 {
                                     text: "🔴 Отклонить",
-
                                     callback_data:
-                                        `reject_${application.id}`
+                                        `reject_${data.telegramId}`
                                 }
 
                             ]
@@ -165,17 +115,14 @@ ${data.duration}
 
 
         console.log(
-            "TELEGRAM RESULT:",
+            "TELEGRAM RESPONSE:",
             telegramResult
         );
 
 
         res.json({
 
-            success: true,
-
-            applicationId:
-                application.id
+            success: true
 
         });
 
@@ -187,11 +134,10 @@ ${data.duration}
             error
         );
 
+
         res.status(500).json({
 
-            success: false,
-
-            error: error.message
+            success: false
 
         });
 
@@ -219,78 +165,28 @@ app.post("/telegram", async (req, res) => {
         }
 
 
-        const callbackData =
-            query.data;
+        const [action, userId] =
+            query.data.split("_");
 
 
-        const parts =
-            callbackData.split("_");
-
-
-        const action =
-            parts[0];
-
-
-        const applicationId =
-            parts[1];
-
-
-        const {
-            data: application,
-            error
-        } = await supabase
-
-            .from("applications")
-
-            .select("*")
-
-            .eq("id", applicationId)
-
-            .single();
-
-
-        if (error || !application) {
-
-            console.log(
-                "APPLICATION NOT FOUND:",
-                applicationId
-            );
-
-            return res.sendStatus(200);
-
-        }
-
-
-        let status;
-
-        let text;
+        let text = "";
 
 
         if (action === "approve") {
 
-            status =
-                "approved";
-
-
             text =
-                "✅ Ваша заявка одобрена RIRKA Ads!\n\n" +
-
-                "Скоро появится возможность " +
-
-                "оплатить размещение ⭐";
+                "✅ Ваша заявка одобрена RIRKA Ads!\n\n"
+                +
+                "Скоро появится возможность оплатить размещение ⭐️";
 
         }
 
 
         if (action === "edit") {
 
-            status =
-                "edit";
-
-
             text =
-                "✏️ Пожалуйста, исправьте заявку " +
-
+                "✏️ Пожалуйста, исправьте заявку "
+                +
                 "и отправьте её снова.";
 
         }
@@ -298,31 +194,10 @@ app.post("/telegram", async (req, res) => {
 
         if (action === "reject") {
 
-            status =
-                "rejected";
-
-
             text =
                 "❌ Ваша заявка отклонена RIRKA Ads.";
 
         }
-
-
-        await supabase
-
-            .from("applications")
-
-            .update({
-
-                status:
-                    status
-
-            })
-
-            .eq(
-                "id",
-                applicationId
-            );
 
 
         await fetch(
@@ -342,11 +217,9 @@ app.post("/telegram", async (req, res) => {
 
                 body: JSON.stringify({
 
-                    chat_id:
-                        application.telegram_id,
+                    chat_id: userId,
 
-                    text:
-                        text
+                    text: text
 
                 })
 
@@ -388,9 +261,13 @@ app.post("/telegram", async (req, res) => {
     } catch (error) {
 
         console.log(
+
             "WEBHOOK ERROR:",
+
             error
+
         );
+
 
         res.sendStatus(500);
 
@@ -400,7 +277,7 @@ app.post("/telegram", async (req, res) => {
 
 
 // =========================
-// ПРОВЕРКА СЕРВЕРА
+// TEST
 // =========================
 
 app.get("/test", (req, res) => {
@@ -413,22 +290,19 @@ app.get("/test", (req, res) => {
 
 
 // =========================
-// ЗАПУСК СЕРВЕРА
+// START SERVER
 // =========================
 
 const PORT =
     process.env.PORT || 3000;
 
 
-app.listen(
-    PORT,
+app.listen(PORT, () => {
 
-    () => {
+    console.log(
 
-        console.log(
-            `RIRKA ADS SERVER STARTED ON PORT ${PORT}`
-        );
+        `RIRKA ADS SERVER STARTED ON PORT ${PORT}`
 
-    }
+    );
 
-);
+});
